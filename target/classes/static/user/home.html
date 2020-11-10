@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>小餐厅 - 主页</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/constant.js"></script>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body>
+<div style="display: flex;flex-direction: column;justify-content: space-around;align-items: center;">
+    <div style="width: 100%;text-align: center;"><span id="welcomeText" class="layui-btn" style="width: 100%;height:50px;padding: 5px 0;"></span> </div>
+    <div style="width: 100%;text-align: center;margin: 20px 0;"><img src="../img/headImg.jpg" style="width:200px;height:200px;border-radius: 100%;"/></div>
+    <div style="width: 100%;text-align: center;margin: 20px 0;"><a href="modify.html"><button class="layui-btn" style="width: 80%;"><i class="layui-icon layui-icon-username"></i>&nbsp;&nbsp;修改个人信息</button></a></div>
+    <div style="width: 100%;text-align: center;"><a href="history.html"><button class="layui-btn" style="width: 80%;"><i class="layui-icon layui-icon-form"></i>&nbsp;&nbsp;查看历史订单</button></a></div>
+    <div style="width: 100%;text-align: center;"><a href="make1.html"><button class="layui-btn-normal" style="margin:20px;border-radius: 5px;padding:20px 40px;width: 90%;height: 100%;font-size: 40px;"><i class="layui-icon layui-icon-fire" style="font-size: 40px;"></i>&nbsp;&nbsp;开始点餐</button></a></div>
+</div>
+<button id="logout" style="position: absolute;right: 0;top:0;height: 50px;" class="layui-btn layui-btn-danger">注销</button>
+</body>
+<script>
+    $(function () {
+        $("#logout").click(function () {
+            if(confirm("确认退出嘛?")) {
+                $.ajax({
+                    type: 'get',
+                    url: RequestURL + '/userLogout',
+                    success: function (data) {
+                        window.location.href="../login.html";
+                    }
+                })
+            }
+        });
+        $.ajax({
+            type:'get',
+            url:RequestURL+'/getUserInfo',
+            success: function(data) {
+                $("#welcomeText").html("<h3>欢迎您,"+data.name+"("+data.tele+")</h3>");
+            }
+        })
+    });
+</script>
+</html>

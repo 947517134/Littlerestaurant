@@ -61,21 +61,16 @@ public class UserController {
 
 
 
-
-
-
-    public List<Map<String,Object>> dids2list(String dids_str){
-        String dids[] = dids_str.split(",");
-        Integer did;
-        Integer number;
-        List<Map<String,Object>> dishes = new ArrayList<>();
-        for(String did_str:dids){
-            did = Integer.parseInt(did_str.split("-")[0]);
-            number = Integer.parseInt(did_str.split("-")[1]);
-            Map<String, Object> dish = jdbcTemplate.queryForMap("select dname,dprice from dish where did=?", did);
-            dish.put("number",number);
-            dishes.add(dish);
-        }
-        return dishes;
+    //用户注销
+    @GetMapping("/userLogout")
+    public void userLogout(HttpServletRequest request){
+        request.getSession().removeAttribute("user");
+        request.getSession().invalidate();
     }
+
+
+
+
+
+
 }

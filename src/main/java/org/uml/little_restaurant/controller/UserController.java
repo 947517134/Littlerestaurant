@@ -29,23 +29,23 @@ public class UserController {
         return userService.registe(new User(tele,pwd,name,address));
     }
 
+
     //用户登录
     @PostMapping("/userLogin")
     public Object userLogin(@RequestParam("tele") String tele,
                             @RequestParam("pwd") String pwd,
                             HttpServletRequest request) {
-        Long uid = userService.login(new User(tele,pwd));        //传到service层的user，这里没有传参，相当于把前端获取端数据封装成全局变量供方法调用
-        System.out.println(uid);        //把service里封装的数据打印
+        Long uid = userService.login(new User(tele,pwd));        //最初版本利用全局变量没有传参，更改业务结构后需要传参
+        System.out.println(uid);
         if(uid!=null){
             User user = new User();
             user.setUid(uid.intValue());
             user.setTele(tele);
             request.getSession().setAttribute("user",user);
-            return 200;     //如果查到结果不为空，通过session返回数据并返回200
+            return 200;                                         //如果查到结果不为空，把数据通过session返回前端，并返回200
         }
         return null;
     }
-
 
 
     //用户注销
@@ -53,6 +53,22 @@ public class UserController {
     public void userLogout(HttpServletRequest request){
         request.getSession().removeAttribute("user");
         request.getSession().invalidate();
+    }
+
+
+    //获取用户信息
+    @GetMapping("/getUserInfo")
+    public Map<String,Object> getUserInfo(HttpServletRequest request){
+        return userService.getUserInfo(request);
+    }
+
+
+    //编辑用户信息
+    @PostMapping("/editUser")
+    public void editUser(@RequestParam("tele")String tele,
+                         @RequestParam("name")String name,
+                         @RequestParam("address")String address){
+        userService.editUser(tele, name, address);
     }
 
 

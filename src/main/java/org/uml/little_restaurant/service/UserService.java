@@ -5,6 +5,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.uml.little_restaurant.pojo.User;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,4 +43,17 @@ public class UserService {
             return null;
         }
     }
+
+    //获取用户信息
+    public Map<String,Object> getUserInfo(HttpServletRequest request){
+        User u = (User)request.getSession().getAttribute("user");
+        String tele = u.getTele();
+        return jdbcTemplate.queryForMap("select tele,name,address from user where tele=?", tele);
+    }
+
+    //编辑用户信息
+    public void editUser(String tele, String name, String address){
+        jdbcTemplate.update("update user set name=?,address=? where tele=?",name,address,tele);
+    }
+
 }

@@ -3,6 +3,7 @@ package org.uml.little_restaurant.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.uml.little_restaurant.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
@@ -54,6 +55,30 @@ public class UserService {
     //编辑用户信息
     public void editUser(String tele, String name, String address){
         jdbcTemplate.update("update user set name=?,address=? where tele=?",name,address,tele);
+    }
+
+
+
+    public void setTid(@RequestParam("type")Integer type, HttpServletRequest request){
+        Map<String ,Object> map = new HashMap<>();
+        map.put("type",type);
+        if(type==1){                                            //前端提交type为1时按照该方法set外卖订单信息
+            String name = request.getParameter("name");
+            String tele = request.getParameter("tele");
+            String address = request.getParameter("address");
+            map.put("name",name);
+            map.put("tele",tele);
+            map.put("address",address);
+        }
+        else if(type==0){                                       //堂食订单待完善
+
+        }
+        request.getSession().setAttribute("map",map);
+    }
+
+
+    public Map<String,Object> getPreOrderInfo(HttpServletRequest request){
+        return (Map<String, Object>) request.getSession().getAttribute("map");
     }
 
 }

@@ -122,6 +122,39 @@
         });
         $("#tangshi").click();
     });
+
+
+
+
+
+
+    function submit() {
+        if(currentSelect=="waimai"){
+            let address=$("#address").val().trim();
+            let name=$("#name").val().trim();
+            let tele=$("#tele").val().trim();
+            if(address==null||address==''||name==''||name==null||tele==null||tele==''){
+                alert("请输入收货信息");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                url: RequestURL + '/setPreOrderInfo',
+                data:{
+                    "type":1,                           //用于标识外卖请求
+                    "address":address,
+                    "name":name,
+                    "tele":tele
+                },
+                success: function (data) {
+                    window.location.href="make2.html";
+                }
+            });
+        }
+    }
+
+
+
 </script>
 </body>
 </html>

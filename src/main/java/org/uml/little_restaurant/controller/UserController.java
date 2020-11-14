@@ -72,6 +72,19 @@ public class UserController {
     }
 
 
+    //设置订单用餐信息
+    @PostMapping("/setPreOrderInfo")
+    public void setTid(@RequestParam("type")Integer type, HttpServletRequest request){
+        userService.setTid(type, request);
+    }
+
+    //获取订单用餐信息
+    @GetMapping("/getPreOrderInfo")
+    public Map<String,Object> getPreOrderInfo(HttpServletRequest request){
+        return userService.getPreOrderInfo(request);
+    }
+
+
 
 
 }

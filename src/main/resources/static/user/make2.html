@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>点餐</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/constant.js"></script>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+</head>
+<body>
+    <div id="orderInfo"></div>
+
+
+<script>
+    $(function () {
+        $.ajax({
+
+            type: 'get',
+            url: RequestURL + '/getPreOrderInfo',
+            success: function (data) {
+                if (data.type == 1) {
+                    $("#orderInfo").html("<div style='flex:1;'>外卖送餐</div><div style='flex:1;'>"+data.name+"</div><div style='flex:1;'>"+data.tele+"</div><div style='flex:2;'>"+data.address+"</div>");
+                }
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

@@ -7,24 +7,233 @@
     <script src="../lib/constant.js"></script>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <style>
+        *{
+            font-family: '微软雅黑 Light';
+        }
+        .dishes{
+            margin-top: 40px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dish{
+            flex:1;
+            border: 1px #BBBBBB solid;
+            width: 95%;
+            height: 80px;
+            border-radius: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+        .dishImgDiv{
+            flex:2;
+            padding: 5px;
+        }
+        .dishNameDiv{
+            flex:4;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px;
+            align-items: flex-start;
+        }
+        .addDiv{
+            flex:2;
+            text-align: center;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .did{
+            flex:1;
+            font-size: 15px;
+        }
+        .dname{
+            flex:3;
+            font-size: 20px;
+            font-weight: 600;
+        }
+        .dprice{
+            color:red;
+            font-weight: 700;
+            flex:2;
+            font-size: 15px;
+        }
+        .add{
+            width: 39px;
+            height: 39px;
+            border: 3px solid #cccccc;
+            border-radius: 100%;
+            padding: 2px;
+        }
+
+        .zhezhao{
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .cart{
+            position: fixed;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            z-index: 3;
+            background-color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+        }
+
+        .myHidden{
+            display: none;
+        }
+
+        .cartItem{
+            height: 40px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .cartdname{
+            flex:4;
+            text-align: center;
+            font-size: 13px;
+        }
+        .cartdprice{
+            flex:2.5;
+            text-align: center;
+            font-size: 9px;
+        }
+        .cartnumberDiv{
+            flex:2;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;;
+        }
+        .cartdelete{
+            flex:1;
+            text-align: center;
+        }
+        .visibleHidden{
+            visibility: hidden;
+        }
+
+    </style>
 </head>
+
 <body>
-    <div id="orderInfo" class="orderInfo"></div>
+
+    <!--菜单-->
+    <div class="dishes" id="dishes">
+        <div class="dish">
+        <!--菜品信息-->
+        </div>
+    </div>
+    <div style="border-bottom:1px solid #CCCCCC;position:fixed;left:0;top:0;display: flex;flex-direction: row;align-items: center;justify-content: space-between;width: 100%;height: 40px;background-color: white;">
+        <div style="font-size: 20px;padding: 5px;font-weight: 600;flex:2;"><a href="make1.html">←</a></div>
+        <div style="flex:7;text-align: center;">菜品列表</div>
+        <div style="flex:2;color: red;text-align: center;font-weight: 600;" onclick="enableZhezhao()" id="cartBtn">购物车 (0)</div>
+    </div>
+
+    <div class="zhezhao myHidden" id="zhezhao" onclick="disableZhezhao()">
+
+    </div>
+
+
+    <!--购物车-->
+    <div class="cart myHidden" id="cart">
+        <span style="border-bottom:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: center;align-items: center;font-size: 18px;"><span>购物车</span></span>
+        <span style="width: 100%;flex:84;overflow-y: auto;" id="cartItems">
+            <!-- 购物车物品-->
+            </span>
+        <span style="border-top:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: space-between;align-items: center;font-size: 18px;">
+                <span style="padding-left: 10px;font-size: 15px;" id="subTotal">小计</span>
+                <div onclick="submitOrder()" style="border-bottom-right-radius:10px;height:100%;padding-left:10px;padding-right:10px;background-color: red;color: white;display: flex;justify-content: center;align-items: center;">
+                    <span>提交订单</span>
+                </div>
+            </span>
+    </div>
+</body>
+
 
 
 <script>
-    $(function () {
-        $.ajax({
 
+    var dishes=[];
+    var cart;
+    $(function(){
+        $.ajax({
             type: 'get',
-            url: RequestURL + '/getPreOrderInfo',
+            url: RequestURL + '/getDishes',
             success: function (data) {
-                if (data.type == 1) {
-                    $("#orderInfo").html("<div style='flex:1;'>外卖送餐</div><div style='flex:1;'>"+data.name+"</div><div style='flex:1;'>"+data.tele+"</div><div style='flex:2;'>"+data.address+"</div>");
+                dishes=data;
+                let result="";
+                for(let i=0;i<dishes.length;i++){
+                    result+=
+                        "        <div class=\"dish\">\n" +
+                        "            <div class=\"dishNameDiv\">\n" +
+                        "                <div class=\"did\">No."+dishes[i].did+"</div>\n" +
+                        "                <div class=\"dname\">"+dishes[i].dname+"</div>\n" +
+                        "                <div class=\"dprice\">￥"+dishes[i].dprice.toFixed(2)+"/份</div>\n" +
+                        "            </div>\n" +
+                        "            <span class=\"addDiv\">\n" +
+                        "                <span class=\"add\" onclick='addToCart("+dishes[i].did+")'>\n" +
+                        "                    <i class=\"layui-icon layui-icon-add-1\" style=\"font-size: 35px;\"></i>\n" +
+                        "                </span>\n" +
+                        "            </span>\n" +
+                        "        </div>";
                 }
+                $("#dishes").html(result);
             }
         });
     });
+
+    // //点击购物车使其可见
+    // function disableZhezhao() {
+    //     $("#zhezhao").attr("class","zhezhao myHidden");
+    //     $("#cart").attr("class","cart myHidden");
+    // }
+    //
+    // function enableZhezhao() {
+    //     $("#zhezhao").attr("class","zhezhao");
+    //     $("#cart").attr("class","cart");
+    //     fillCart();
+    // }
+
+
+    //测试传参是否成功（成功）
+    // $(function () {
+    //     $.ajax({
+    //
+    //         type: 'get',
+    //         url: RequestURL + '/getPreOrderInfo',
+    //         success: function (data) {
+    //             if (data.type == 1) {
+    //                 $("#orderInfo").html("<div style='flex:1;'>外卖送餐</div><div style='flex:1;'>"+data.name+"</div><div style='flex:1;'>"+data.tele+"</div><div style='flex:2;'>"+data.address+"</div>");
+    //             }
+    //         }
+    //     });
+    // });
 
 </script>
 </body>

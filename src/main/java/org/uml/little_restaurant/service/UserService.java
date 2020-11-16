@@ -58,7 +58,7 @@ public class UserService {
     }
 
 
-
+    //提交订单信息（目前只有外卖订单信息处理）
     public void setTid(@RequestParam("type")Integer type, HttpServletRequest request){
         Map<String ,Object> map = new HashMap<>();
         map.put("type",type);
@@ -77,6 +77,7 @@ public class UserService {
     }
 
 
+    //获取订单信息
     public Map<String,Object> getPreOrderInfo(HttpServletRequest request){
         return (Map<String, Object>) request.getSession().getAttribute("map");
     }

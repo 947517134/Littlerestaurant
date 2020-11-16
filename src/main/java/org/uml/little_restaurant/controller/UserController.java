@@ -3,7 +3,7 @@ package org.uml.little_restaurant.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
-//import org.uml.little_restaurant.service.Restaurant;
+import org.uml.little_restaurant.service.RestaurantService;
 import org.uml.little_restaurant.pojo.User;
 import org.uml.little_restaurant.service.UserService;
 
@@ -18,6 +18,9 @@ public class UserController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    RestaurantService restaurantService;
 
     //用户注册
     @PostMapping("/userRegiste")
@@ -84,6 +87,11 @@ public class UserController {
         return userService.getPreOrderInfo(request);
     }
 
+    //获取所有菜品
+    @GetMapping("/getDishes")
+    public List<Map<String,Object>> getDishes(){
+        return restaurantService.getDishes();
+    }
 
 
 

@@ -33,10 +33,6 @@
             justify-content: center;
             align-items: center;
         }
-        .dishImgDiv{
-            flex:2;
-            padding: 5px;
-        }
         .dishNameDiv{
             flex:4;
             display: flex;
@@ -179,6 +175,7 @@
 
 <script>
 
+    //获取菜品数据并打印菜单
     var dishes=[];
     var cart;
     $(function(){
@@ -206,19 +203,148 @@
                 $("#dishes").html(result);
             }
         });
+        let a=getCookie("cart");
+        a = a.substring(0,a.lastIndexOf(']')+1);                        //改变数量
+        if(a=="[]"||a==''){
+            cart=[];
+        }
+        else cart=JSON.parse(a);
+        setCookie("cart",JSON.stringify(cart),7200);
+        countTotal();
     });
 
-    // //点击购物车使其可见
-    // function disableZhezhao() {
-    //     $("#zhezhao").attr("class","zhezhao myHidden");
-    //     $("#cart").attr("class","cart myHidden");
-    // }
-    //
-    // function enableZhezhao() {
-    //     $("#zhezhao").attr("class","zhezhao");
-    //     $("#cart").attr("class","cart");
-    //     fillCart();
-    // }
+    //点击购物车使其可见
+    function disableZhezhao() {
+        $("#zhezhao").attr("class","zhezhao myHidden");
+        $("#cart").attr("class","cart myHidden");
+    }
+
+    function enableZhezhao() {
+        $("#zhezhao").attr("class","zhezhao");
+        $("#cart").attr("class","cart");
+        fillCart();
+    }
+
+    //渲染购物车
+    function fillCart() {
+        let result="";
+        if(cart.length==0){
+            result="<div style='text-align: center;'><h1>暂未添加菜品</h1></div>";
+        }
+        for(let i=0;i<cart.length;i++){
+            result+="<div class=\"cartItem\">\n" +
+                "                <div class=\"cartdname\">"+cart[i].dname+"</div>\n" +
+                "                <div class=\"cartdprice\">￥"+cart[i].dprice.toFixed(2)+"/份</div>\n" +
+                "                <div class=\"cartnumberDiv\">\n";
+            if(cart[i].number==1)
+                result+="                    <span onclick=\"minusNumber(this,"+cart[i].did+")\" style='cursor: pointer;' class='visibleHidden'>◀</span>\n";
+            else
+                result+="                    <span onclick=\"minusNumber(this,"+cart[i].did+")\" style='cursor: pointer;'>◀</span>\n";
+            result+=
+                "                    <span>"+cart[i].number+"</span>\n" +
+                "                    <span onclick=\"addNumber(this,"+cart[i].did+")\" style='cursor: pointer;'>▶</span>\n" +
+                "                </div>\n" +
+                "                <div class=\"cartdelete\"><i style='font-size: 20px;' class=\"layui-icon layui-icon-delete\" onclick=\"deleteFromCart(this,"+cart[i].did+")\"></i></div>\n" +
+                "            </div>";
+        }
+        $("#cartItems").html(result);
+    }
+
+    //加入购物车
+    function addToCart(did) {
+        cart=getCookie("cart");
+        cart = cart.substring(0,cart.lastIndexOf(']')+1);
+        if(cart=="[]"||cart==''){
+            cart=[];
+        }
+        else cart=JSON.parse(cart);
+        let dish;
+        for(let i=0;i<dishes.length;i++){
+            if(did==dishes[i].did) {
+                dish=dishes[i];
+                break;
+            }
+        }
+        for(i=0;i<cart.length;i++){
+            if(cart[i].did==dish.did){
+                cart[i].number++;
+                break;
+            }
+        }
+        if(i==cart.length){
+            cart.push({"did":dish.did,"dname":dish.dname,"dprice":dish.dprice,"number":1});
+        }
+        setCookie("cart",JSON.stringify(cart),7200);
+        countTotal();
+    }
+
+    //增加数量
+    function addNumber(e,did) {
+        let number = $(e).prev().text();
+        number++;
+        if(number>1) $(e).prev().prev().removeAttr("class");
+        $(e).prev().text(number);
+        for(let i=0;i<cart.length;i++)
+            if(cart[i].did==did){
+                cart[i].number=number;
+                setCookie("cart",JSON.stringify(cart),7200);
+                countTotal();
+                break;
+            }
+    }
+
+
+    //减少数量
+    function minusNumber(e,did) {
+        let number = $(e).next().text();
+        number--;
+        if(number==1) $(e).attr("class","visibleHidden");
+        $(e).next().text(number);
+        for (let i = 0; i < cart.length; i++)
+            if (cart[i].did == did) {
+                cart[i].number = number;
+                setCookie("cart", JSON.stringify(cart), 7200);
+                countTotal();
+                break;
+            }
+    }
+
+    //从购物车中删除
+    function deleteFromCart(e,did) {
+        let item;
+        for(let i=0;i<cart.length;i++)
+            if(cart[i].did==did){
+                item=cart[i];
+                break;
+            }
+        if(confirm("确定删除\""+item.dname+"\"吗?")){
+            $(e).remove();
+            for(let i=0;i<cart.length;i++)
+                if(cart[i].did==did){
+                    cart.splice(i,1);
+                    setCookie("cart", JSON.stringify(cart), 7200);
+                    fillCart();
+                    countTotal();
+                    break;
+                }
+        }
+    }
+
+
+
+
+    //计算小计
+    function countTotal() {
+        let count=0;
+        let total=0;
+        for(let i=0;i<cart.length;i++) {
+            count += cart[i].number;
+            total+=cart[i].number*cart[i].dprice;
+        }
+        $("#cartBtn").text("购物车 ("+count+")");
+        $("#subTotal").text("小计 : ￥"+total.toFixed(2));
+    }
+
 
 
     //测试传参是否成功（成功）

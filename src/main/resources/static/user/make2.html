@@ -139,36 +139,36 @@
 
 <body>
 
-    <!--菜单-->
-    <div class="dishes" id="dishes">
-        <div class="dish">
+<!--菜单-->
+<div class="dishes" id="dishes">
+    <div class="dish">
         <!--菜品信息-->
-        </div>
     </div>
-    <div style="border-bottom:1px solid #CCCCCC;position:fixed;left:0;top:0;display: flex;flex-direction: row;align-items: center;justify-content: space-between;width: 100%;height: 40px;background-color: white;">
-        <div style="font-size: 20px;padding: 5px;font-weight: 600;flex:2;"><a href="make1.html">←</a></div>
-        <div style="flex:7;text-align: center;">菜品列表</div>
-        <div style="flex:2;color: red;text-align: center;font-weight: 600;" onclick="enableZhezhao()" id="cartBtn">购物车 (0)</div>
-    </div>
+</div>
+<div style="border-bottom:1px solid #CCCCCC;position:fixed;left:0;top:0;display: flex;flex-direction: row;align-items: center;justify-content: space-between;width: 100%;height: 40px;background-color: white;">
+    <div style="font-size: 20px;padding: 5px;font-weight: 600;flex:2;"><a href="make1.html">←</a></div>
+    <div style="flex:7;text-align: center;">菜品列表</div>
+    <div style="flex:2;color: red;text-align: center;font-weight: 600;" onclick="enableZhezhao()" id="cartBtn">购物车 (0)</div>
+</div>
 
-    <div class="zhezhao myHidden" id="zhezhao" onclick="disableZhezhao()">
+<div class="zhezhao myHidden" id="zhezhao" onclick="disableZhezhao()">
 
-    </div>
+</div>
 
 
-    <!--购物车-->
-    <div class="cart myHidden" id="cart">
-        <span style="border-bottom:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: center;align-items: center;font-size: 18px;"><span>购物车</span></span>
-        <span style="width: 100%;flex:84;overflow-y: auto;" id="cartItems">
+<!--购物车-->
+<div class="cart myHidden" id="cart">
+    <span style="border-bottom:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: center;align-items: center;font-size: 18px;"><span>购物车</span></span>
+    <span style="width: 100%;flex:84;overflow-y: auto;" id="cartItems">
             <!-- 购物车物品-->
             </span>
-        <span style="border-top:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: space-between;align-items: center;font-size: 18px;">
+    <span style="border-top:1px #CCCCCC solid;width: 100%;flex:8;text-align: center;display: flex;justify-content: space-between;align-items: center;font-size: 18px;">
                 <span style="padding-left: 10px;font-size: 15px;" id="subTotal">小计</span>
                 <div onclick="submitOrder()" style="border-bottom-right-radius:10px;height:100%;padding-left:10px;padding-right:10px;background-color: red;color: white;display: flex;justify-content: center;align-items: center;">
                     <span>提交订单</span>
                 </div>
             </span>
-    </div>
+</div>
 </body>
 
 
@@ -346,6 +346,16 @@
     }
 
 
+    //确认订单 - 跳转到付款界面
+    function submitOrder() {
+        if(cart.length<=0){
+            alert("请选购菜品!");
+            return false;
+        }
+        if(confirm("确认提交订单吗?"))
+            window.location.href="make3.html";
+    }
+    
 
     //测试传参是否成功（成功）
     // $(function () {

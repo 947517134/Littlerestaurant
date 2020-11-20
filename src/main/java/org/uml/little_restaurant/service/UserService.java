@@ -7,8 +7,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.uml.little_restaurant.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserService {
@@ -82,4 +85,24 @@ public class UserService {
         return (Map<String, Object>) request.getSession().getAttribute("map");
     }
 
+    //提交生成订单
+    public String makeOrder(Double money, String dids, HttpServletRequest request) {
+        String oid = UUID.randomUUID().toString();
+        User u = (User) request.getSession().getAttribute("user");
+        Integer uid = u.getUid();
+        String starttime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        Map<String, Object> info = getPreOrderInfo(request);
+        Integer type = (Integer) info.get("type");
+        String name = (String) info.get("name");
+        String tele = (String) info.get("tele");
+        int a = 0;
+
+        //暂时按照外卖订单处理（待完善）
+        String address = (String) info.get("address");
+        jdbcTemplate.update("insert into orders(oid,uid,starttime,money,state,type,address,dids,name,tele) values(?,?,?,?,?,?,?,?,?,?)",
+                oid,uid,starttime,money,0,type,address,dids,name,tele);
+
+        return oid;
+
+    }
 }

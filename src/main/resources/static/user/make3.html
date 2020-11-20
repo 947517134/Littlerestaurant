@@ -105,5 +105,32 @@
         $("#dishes").html(result);
         $("#subTotal").html("总计 ￥"+count.toFixed(2)+"元");
     });
+
+
+    //付款并提交订单
+    function makeOrder() {
+        if(confirm("现在付款吗？")){
+            let dids="";
+            for(let i=0;i<cart.length;i++){
+                dids+=cart[i].did+"-"+cart[i].number;
+                if(i<cart.length-1){
+                    dids+=",";
+                }
+            }
+            $.ajax({
+                type: 'post',
+                url: RequestURL + '/makeOrder',
+                data:{
+                    "money":count,
+                    "dids":dids
+                },
+                success: function (data) {
+                    delCookie("cart");
+                    window.location.href="makeOrderSuccess.html";
+                }
+            });
+        }
+    }
 </script>
 </html>
+

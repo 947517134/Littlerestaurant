@@ -93,7 +93,7 @@ public class UserController {
         return restaurantService.getDishes();
     }
 
-    //提交生成订单 -- 需实现订单分类以便于后期接单分配（service层未实现分类，待完善）
+    //提交生成订单 -- 需实现订单分类以便于后期接单分配（已完善）
     @PostMapping("/makeOrder")
     public String makeOrder(@RequestParam("money")Double money, @RequestParam("dids")String dids, HttpServletRequest request){
         return userService.makeOrder(money, dids, request);

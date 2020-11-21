@@ -98,10 +98,18 @@ public class UserService {
         String tele = (String) info.get("tele");
         int a = 0;
 
-        //暂时按照外卖订单处理（待完善）
-        String address = (String) info.get("address");
-        jdbcTemplate.update("insert into orders(oid,uid,starttime,money,state,type,address,dids,name,tele) values(?,?,?,?,?,?,?,?,?,?)",
-                oid,uid,starttime,money,0,type,address,dids,name,tele);
+        //实现分类处理生成订单（已完善）
+        if(type==0){
+            Integer tid = (Integer) info.get("tid");
+            jdbcTemplate.update("insert into orders(oid,uid,starttime,money,state,type,tid,dids,name,tele) values(?,?,?,?,?,?,?,?,?,?)",
+                    oid,uid,starttime,money,0,type,tid,dids,name,tele);
+            jdbcTemplate.update("update tables set tstate=0 where tid=?",tid);
+        }
+        if(type==1){
+            String address = (String) info.get("address");
+            jdbcTemplate.update("insert into orders(oid,uid,starttime,money,state,type,address,dids,name,tele) values(?,?,?,?,?,?,?,?,?,?)",
+                    oid,uid,starttime,money,0,type,address,dids,name,tele);
+        }
 
         return oid;
 

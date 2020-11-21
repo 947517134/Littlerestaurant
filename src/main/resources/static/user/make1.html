@@ -135,6 +135,7 @@
             },
             url: RequestURL + '/getFreeTablesByCap',
             success: function (data) {
+                currentTable=0;
                 let res="";
                 if(data.length==0) res+="店内暂无满足用餐人数的餐桌";            //查询到没有状态为1的记录，即没有空闲桌子
                 else for(let i=0;i<data.length;i++){
@@ -144,6 +145,30 @@
                 $("#tables").html(res);
             }
         })
+    }
+
+
+    function changeTable(tid) {
+        if(currentTable==0) {                                       //未选择状态则进行选中
+            currentTable=tid;
+            let class2 = $("#table"+currentTable).attr("class");
+            class2+=" tableSelected";
+            $("#table"+currentTable).attr("class",class2);
+        }
+        else if(currentTable!=tid){                                 //更改选中
+            let class1 = $("#table"+currentTable).attr("class");
+            $("#table"+currentTable).removeAttr("class");
+            $("#table"+currentTable).attr("class",class1.substring(0,3));
+            currentTable=tid;
+            let class2 = $("#table"+currentTable).attr("class");
+            class2+=" tableSelected";
+            $("#table"+currentTable).attr("class",class2);
+        }else if(currentTable==tid){                                //二次选中则取消
+            let class1 = $("#table"+currentTable).attr("class");
+            $("#table"+currentTable).removeAttr("class");
+            $("#table"+currentTable).attr("class",class1.substring(0,3));
+            currentTable=0;
+        }
     }
 
 

@@ -99,5 +99,11 @@ public class UserController {
         return userService.makeOrder(money, dids, request);
     }
 
+    //通过用餐人数 获取空闲桌号
+    @GetMapping("/getFreeTablesByCap")
+    public List<Map<String,Object>> getFreeTablesByCap(@RequestParam("cap")Integer cap) {
+        return userService.getFreeTablesByCap(cap);
+    }
+
 
 }

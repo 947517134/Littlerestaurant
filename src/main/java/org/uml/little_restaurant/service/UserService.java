@@ -8,10 +8,7 @@ import org.uml.little_restaurant.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UserService {
@@ -105,4 +102,10 @@ public class UserService {
         return oid;
 
     }
+
+    public List<Map<String,Object>> getFreeTablesByCap(@RequestParam("cap")Integer cap) {
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList("select tid,tstate from tables where tcap=? or tcap=? order by tid asc", cap, cap + 1);
+        return maps;
+    }
+
 }

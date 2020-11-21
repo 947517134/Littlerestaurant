@@ -121,8 +121,30 @@
             $("#waimaiDiv").attr("style","display:none;");
         });
         $("#tangshi").click();
+        getTables();
     });
 
+    //获取餐桌
+    function getTables(){
+        let cap = $("#cap").val().trim();
+        $.ajax({
+            async:false,
+            type: 'get',
+            data:{
+                "cap":cap
+            },
+            url: RequestURL + '/getFreeTablesByCap',
+            success: function (data) {
+                let res="";
+                if(data.length==0) res+="店内暂无满足用餐人数的餐桌";            //查询到没有状态为1的记录，即没有空闲桌子
+                else for(let i=0;i<data.length;i++){
+                    if(data[i].tstate==1) res+="<div class='ava' id='table"+data[i].tid+"' style='text-align:center;font-size:28px;font-weight:700;width: 40px;height: 40px;border:1px black solid;margin:10px;' onclick='changeTable("+data[i].tid+")'>"+data[i].tid+"</div>";
+                    else res+="<div class='una' id='table"+data[i].tid+"' style='text-align:center;font-size:28px;font-weight:700;width: 40px;height: 40px;border:1px black solid;margin:10px;'>"+data[i].tid+"</div>";
+                }
+                $("#tables").html(res);
+            }
+        })
+    }
 
 
 

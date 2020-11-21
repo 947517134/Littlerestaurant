@@ -78,7 +78,7 @@
     var count=0;
     $(function () {
         $.ajax({
-            async:false,
+            async:false,                            //不允许异步，只有在获取到订单信息并打印后才继续处理其他请求，优先渲染
             type: 'get',
             url: RequestURL + '/getPreOrderInfo',
             success: function (data) {

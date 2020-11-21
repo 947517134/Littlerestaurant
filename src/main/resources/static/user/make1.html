@@ -198,6 +198,24 @@
                 }
             });
         }
+        else{
+            if(currentTable==0){
+                alert("请选桌!");
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                url: RequestURL + '/setPreOrderInfo',
+                data:{
+                    "type":0,                           //用于标识堂食请求
+                    "tid":currentTable
+                },
+                success: function (data) {
+                    window.location.href="make2.html";
+                }
+            });
+
+        }
     }
 
 

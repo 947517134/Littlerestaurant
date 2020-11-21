@@ -70,8 +70,12 @@ public class UserService {
             map.put("tele",tele);
             map.put("address",address);
         }
-        else if(type==0){                                       //堂食订单待完善
-
+        else if(type==0){                                       //堂食订单待完善（已完善）
+            Integer tid = Integer.parseInt(request.getParameter("tid"));
+            Map<String, Object> info = getUserInfo(request);
+            map.put("name",info.get("name"));
+            map.put("tele",info.get("tele"));
+            map.put("tid",tid);
         }
         request.getSession().setAttribute("map",map);
     }

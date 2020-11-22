@@ -105,5 +105,11 @@ public class UserController {
         return userService.getFreeTablesByCap(cap);
     }
 
+    //获取用户订单历史信息
+    @GetMapping("/getOrdersInfo")
+    public List<Map<String,Object>> getOrdersInfo(HttpServletRequest request){
+        return userService.getOrdersInfo(request);
+    }
+
 
 }

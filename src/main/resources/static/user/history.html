@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../lib/constant.js"></script>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <style>
+        *{
+            font-family: "微软雅黑";
+            font-size: 90%;
+            color: rgba(0,0,0,0.7);
+        }
+        .orders{
+            margin-top:50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .order{
+            border-radius: 10px;
+            border:1px solid #CCCCCC;
+            width: 92%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top:10px;
+            margin-bottom:10px;
+            padding: 15px 2%;
+        }
+        .state{
+            width: 86%;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .orderInfo{
+            width: 86%;
+            padding: 5px 4%;
+            border: 1px solid #DDDDDD;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: flex-start;
+            font-size: 16px;
+        }
+        .dishes{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 86%;
+            padding: 5px 4%;
+            border: 1px solid #DDDDDD;
+        }
+        .dishItem{
+            font-size: 14px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+<div style="border-bottom:1px solid #CCCCCC;position:fixed;left:0;top:0;display: flex;flex-direction: row;align-items: center;justify-content: space-between;width: 100%;height: 50px;background-color: white;">
+    <div style="font-size: 20px;padding: 5px;font-weight: 600;flex:2;"><a href="home.html">←</a></div>
+    <div style="flex:7;text-align: center;font-size: 20px;">历史订单</div>
+    <div style="flex:2;"></div>
+</div>
+<div class="orders" id="orders">
+
+</div>
+</body>
+
+<script>
+    $(function () {
+        $.ajax({
+            async:false,
+            type: 'get',
+            url: RequestURL + '/getOrdersInfo',
+            success: function (data) {
+                let result="";
+                let state="";
+                let dishes="";
+                let info="";
+                let info2="";
+                for(let i=0;i<data.length;i++){
+                    result+="<div class=\"order\">";
+
+                    if(data[i].state==0) state="<div class=\"state\">已下单</div>";
+                    else if(data[i].state==1) state="<div class=\"state\">进行中</div>";
+                    else if(data[i].state==2) state="<div class=\"state\">已完结</div>";
+                    result+=state;
+                    info="";
+                    if(data[i].type==0)
+                        info="<div class=\"orderInfo\">\n" +
+                            "            <div style='flex:1;'>店内就餐</div>\n" +
+                            "            <div style=\"flex:1;\">餐桌号:"+data[i].tid+"</div>\n" +
+                            "        </div>";
+                    else if(data[i].type==1)
+                        info="<div class=\"orderInfo\">\n" +
+                            "            <div style='flex:1;'>外卖送餐</div>\n" +
+                            "            <div style=\"flex:1;\">"+data[i].name+"</div>\n" +
+                            "            <div style=\"flex:1;\">"+data[i].tele+"</div>\n" +
+                            "            <div style=\"flex:1;\">"+data[i].address+"</div>\n" +
+                            "        </div>";
+                    result+=info;
+                    dishes="<div class=\"dishes\">";
+                    for(let j=0;j<data[i].dishes.length;j++){
+                        dishes+="<div class=\"dishItem\">\n" +
+                            "                <div style=\"width: 40%;text-align: left;\">"+data[i].dishes[j].dname+"</div>\n" +
+                            "                <div style=\"width: 30%;text-align: center;\">￥"+data[i].dishes[j].dprice.toFixed(2)+"/份</div>\n" +
+                            "                <div style=\"width: 20%;text-align: center;\">"+data[i].dishes[j].number+"份</div>\n" +
+                            "            </div>";
+                    }
+                    dishes+="</div>";
+                    result+=dishes;
+                    info2="";
+                    if(data[i].state==0)
+                        info2="<div class=\"orderInfo\">\n" +
+                            "<div style='flex:1;'>总计 ￥"+data[i].money+"元</div>\n" +
+                            "<div style='flex:1;'>订单编号: "+data[i].oid+"</div>\n" +
+                            "<div style=\"flex:1;\">下单时间: "+data[i].starttime+"</div>\n" +
+                            "</div>";
+                    else if(data[i].state==1)
+                        info2="<div class=\"orderInfo\">\n" +
+                            "<div style='flex:1;'>总计 ￥"+data[i].money+"元</div>\n" +
+                            "<div style='flex:1;'>订单编号: "+data[i].oid+"</div>\n" +
+                            "<div style='flex:1;'>服务员: "+data[i].eid+"."+data[i].ename+"</div>\n" +
+                            "<div style=\"flex:1;\">下单时间: "+data[i].starttime+"</div>\n" +
+                            "</div>";
+                    else if(data[i].state==2)
+                        info2="<div class=\"orderInfo\">\n" +
+                            "<div style='flex:1;'>总计 ￥"+data[i].money+"元</div>\n" +
+                            "<div style='flex:1;'>订单编号: "+data[i].oid+"</div>\n" +
+                            "<div style='flex:1;'>服务员: "+data[i].eid+"."+data[i].ename+"</div>\n" +
+                            "<div style=\"flex:1;\">下单时间: "+data[i].starttime+"</div>\n" +
+                            "<div style=\"flex:1;\">结束时间: "+data[i].endtime+"</div>\n" +
+                            "</div>";
+                    result+=info2;
+                    result+="</div>";
+                }
+                $("#orders").html(result);
+            }
+        });
+    });
+</script>
+</html>

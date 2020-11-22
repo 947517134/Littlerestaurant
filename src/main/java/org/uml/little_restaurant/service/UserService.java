@@ -120,4 +120,38 @@ public class UserService {
         return maps;
     }
 
+    //获取订单信息并循环遍历输出
+    public List<Map<String,Object>> getOrdersInfo(HttpServletRequest request){
+        User u = (User)request.getSession().getAttribute("user");
+        Integer uid = u.getUid();
+        List<Map<String, Object>> orders = jdbcTemplate.queryForList("select * from orders where uid=? order by starttime desc",uid);
+        for(Map<String,Object> order:orders){
+            String dids= (String) order.get("dids");
+            order.put("dishes",dids2list(dids));
+            Integer state = (Integer) order.get("state");
+            //如果已被接单或已完结，应显示员工编号及姓名
+            if(state!=0){
+                Integer eid = (Integer) order.get("eid");
+                order.putAll(jdbcTemplate.queryForMap("select ename from emp where eid=?",eid));
+            }
+        }
+        return orders;
+    }
+
+    //输出订单内容
+    public List<Map<String,Object>> dids2list(String dids_str){
+        String dids[] = dids_str.split(",");
+        Integer did;
+        Integer number;
+        List<Map<String,Object>> dishes = new ArrayList<>();
+        for(String did_str:dids){
+            did = Integer.parseInt(did_str.split("-")[0]);
+            number = Integer.parseInt(did_str.split("-")[1]);
+            Map<String, Object> dish = jdbcTemplate.queryForMap("select dname,dprice from dish where did=?", did);
+            dish.put("number",number);
+            dishes.add(dish);
+        }
+        return dishes;
+    }
+
 }

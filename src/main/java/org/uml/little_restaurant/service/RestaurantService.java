@@ -24,6 +24,32 @@ public class RestaurantService {
         map.put("msg","获取数据成功");
         return map;
     }
+    //(分页)获取餐桌列表
+    public Map<String, Object> getTableByPage(Integer page, Integer limit) {
+        Map<String,Object> map = new HashMap<>();
+        List<Map<String,Object>> tables = myDataBase.getTableByPage(page,limit);
+        Long count = myDataBase.getTableCount();
+        map.put("data",tables);
+        map.put("count",count);
+        map.put("code",0);
+        map.put("msg","获取数据成功");
+        return map;
+    }
+
+    //添加餐桌
+    public void addTable(Integer tcap) {
+        myDataBase.addTable(tcap);
+    }
+
+    //删除餐桌
+    public void deleteTable(Integer tid) {
+        myDataBase.deleteTable(tid);
+    }
+
+    //编辑餐桌
+    public void editTable(Integer tid, Integer tcap) {
+        myDataBase.editTable(tid,tcap);
+    }
 
     //删除菜品
     public void deleteDish(Integer did) {

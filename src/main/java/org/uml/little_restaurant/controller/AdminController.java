@@ -37,6 +37,31 @@ public class AdminController {
         }
         return 404;
     }
+    //(分页)获取所有餐桌
+    @GetMapping("/admin/getTableByPage")
+    public Map<String,Object> getTableByPage(@RequestParam("page")Integer page,
+                                             @RequestParam("limit")Integer limit){
+        return restaurantService.getTableByPage(page,limit);
+    }
+
+    //删除餐桌
+    @PostMapping("/admin/deleteTable")
+    public void deleteTable(@RequestParam("tid")Integer tid){
+        restaurantService.deleteTable(tid);
+    }
+
+    //编辑餐桌
+    @PostMapping("/admin/editTable")
+    public void editTable(@RequestParam("tid")Integer tid,
+                          @RequestParam("tcap")Integer tcap){
+        restaurantService.editTable(tid,tcap);
+    }
+
+    //添加餐桌
+    @PostMapping("/admin/addTable")
+    public void addTable(@RequestParam("tcap")Integer tcap){
+        restaurantService.addTable(tcap);
+    }
     //(分页)获取菜品信息
     @GetMapping("/admin/getDishByPage")
     public Map<String,Object> getDishByPage(@RequestParam("page")Integer page,

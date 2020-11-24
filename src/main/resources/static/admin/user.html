@@ -17,3 +17,24 @@
 <table id="demo" lay-filter="test"></table>
 
 </body>
+<script>
+    layui.use('table', function(){
+        table = layui.table;
+        //第一个实例
+        tableIns=table.render({
+            elem: '#demo'
+            ,width:950
+            ,height: 700
+            ,url: RequestURL+'/admin/getUsers' //数据接口
+            ,page: true //开启分页
+            ,limit: 10
+            ,cols: [[ //表头
+                {field: 'uid', title: '用户编号', fixed: 'left',width:150}
+                ,{field: "name", title: '预留姓名',width:150}
+                ,{field: "tele", title: '预留手机号',width:150}
+                ,{field: "address", title: '预留地址',width:500}
+            ]]
+        });
+    });
+</script>
+</html>

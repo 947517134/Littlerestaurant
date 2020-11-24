@@ -89,6 +89,18 @@ public class AdminController {
                         @RequestParam("dprice")Double dprice){
         restaurantService.addDish(dname,dprice);
     }
+    //(分页)查看所有用户 -- 管理员只能查看用户 不能增删改
+    @GetMapping("/admin/getUsers")
+    public Map<String,Object> getUsers(@RequestParam("page")Integer page,
+                                       @RequestParam("limit")Integer limit){
+        return adminService.getUsers(page, limit);
+    }
+    @GetMapping("/admin/scanOrders")
+    public Map<String,Object> getOrdersInfo(@RequestParam("page")Integer page,
+                                            @RequestParam("limit")Integer limit){
+        return adminService.getOrdersInfo(page,limit);
+    }
+
 
 
 }

@@ -95,6 +95,12 @@ public class AdminController {
                                        @RequestParam("limit")Integer limit){
         return adminService.getUsers(page, limit);
     }
+    //(分页)获取所有订单 - 管理员只能查看订单信息 不能增删改
+    @GetMapping("/admin/scanOrders")
+    public Map<String,Object> getOrdersInfo(@RequestParam("page")Integer page,
+                                            @RequestParam("limit")Integer limit){
+        return adminService.getOrdersInfo(page,limit);
+    }
 
 
 

@@ -1,12 +1,33 @@
 package org.uml.little_restaurant.dao;
 
 import org.apache.ibatis.annotations.*;
+import org.uml.little_restaurant.pojo.Emp;
 
 import java.util.List;
 import java.util.Map;
 
 @Mapper
 public interface MyDataBase {
+    //分页获取员工
+    @Select("select eid,ename,egender,(case etype when 0 then '服务员' else '外卖员' end) etype,edate from emp limit ${(page-1)*limit},#{limit}")
+    List<Map<String, Object>> getEmpByPage(Integer page, Integer limit);
+
+    //获取员工总数
+    @Select("select count(*) from emp")
+    Long getEmpCount();
+
+    //删除员工
+    @Delete("delete from emp where eid=#{eid}")
+    void deleteEmp(Integer eid);
+
+    //编辑员工
+    @Update("update emp set ename=#{ename},egender=#{egender},etype=#{etype},edate=#{edate} where eid=#{eid}")
+    void editEmp(Emp emp);
+
+    //增加员工
+    @Insert("insert into emp(ename,egender,etype,edate) values(#{ename},#{egender},#{etype},#{edate})")
+    void addEmp(Emp emp);
+
     //分页获取餐桌
     @Select("select tid,tcap,(case tstate when 0 then '不可用' else '可用' end) tstate from tables limit ${(page-1)*limit},#{limit}")
     List<Map<String, Object>> getTableByPage(Integer page, Integer limit);

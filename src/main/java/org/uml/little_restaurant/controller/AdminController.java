@@ -11,6 +11,7 @@ import org.uml.little_restaurant.service.AdminService;
 import org.uml.little_restaurant.service.RestaurantService;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -102,12 +103,11 @@ public class AdminController {
         return adminService.getOrdersInfo(page,limit);
     }
 
-    @GetMapping("/admin/scanOrders")
-    public Map<String,Object> getOrdersInfo(@RequestParam("page")Integer page,
-                                            @RequestParam("limit")Integer limit){
-        return adminService.getOrdersInfo(page,limit);
+    //查看某一订单所有的菜品
+    @GetMapping("/admin/scanOrder")
+    public List<Map<String,Object>> scanOrder(@RequestParam("oid")String oid){
+        return adminService.scanOrder(oid);
     }
-
 
 
 }

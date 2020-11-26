@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,5 +49,26 @@ public class AdminService {
         map.put("code",0);
         map.put("msg","获取数据成功");
         return map;
+    }
+    public List<Map<String,Object>> scanOrder(String oid){
+        Map<String,Object> map = jdbcTemplate.queryForMap("select dids from orders where oid=?",oid);
+        String dids = (String) map.get("dids");
+        return dids2list(dids);
+
+
+    }
+    public List<Map<String,Object>> dids2list(String dids_str) {
+        String[] dids = dids_str.split(",");
+        Integer did;
+        Integer number;
+        List<Map<String, Object>> dishes = new ArrayList<>();
+        for (String did_str : dids) {
+            did = Integer.parseInt(did_str.split("-")[0]);
+            number = Integer.parseInt(did_str.split("-")[1]);
+            Map<String, Object> dish = jdbcTemplate.queryForMap("select dname,dprice from dish where did=?", did);
+            dish.put("number", number);
+            dishes.add(dish);
+        }
+        return dishes;
     }
 }

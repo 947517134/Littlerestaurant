@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>员工主页</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/constant.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div><h1>欢迎使用餐员工接单系统</h1></div>
+<div>编号: <span id="eid"></span></div>
+<div>姓名: <span id="ename"></span></div>
+<div>性别: <span id="egender"></span></div>
+<div>类型: <span id="etype"></span></div>
+<div>入职时间: <span id="edate"></span></div>
+</body>
+<script>
+    $(function () {
+        $.ajax({
+            url:RequestURL+"/emp/getEmpInfo",
+            type:'get',
+            success:function (data) {
+                $("#eid").text(data.eid);
+                $("#ename").text(data.ename);
+                $("#egender").text(data.egender);
+                if(data.etype==0)
+                    $("#etype").text("餐厅服务员");
+                else if(data.etype==1)
+                    $("#etype").text("外卖配送员");
+                $("#edate").text(data.edate);
+            }
+        });
+    });
+</script>
+</html>

@@ -95,11 +95,6 @@ public class AdminController {
                                        @RequestParam("limit")Integer limit){
         return adminService.getUsers(page, limit);
     }
-    @GetMapping("/admin/scanOrders")
-    public Map<String,Object> getOrdersInfo(@RequestParam("page")Integer page,
-                                            @RequestParam("limit")Integer limit){
-        return adminService.getOrdersInfo(page,limit);
-    }
 
 
 

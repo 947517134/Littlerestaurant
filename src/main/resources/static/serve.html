@@ -9,9 +9,9 @@
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
     <link rel="stylesheet" href="lib/layui/css/layui.css">
     <style>
-        .main{
-            margin:auto;
-            border:1px solid #01AAED;
+        .main {
+            margin: auto;
+            border: 1px solid #01AAED;
             border-radius: 20px;
             padding: 20px;
             height: 200px;
@@ -25,42 +25,49 @@
 </head>
 <body>
 <div class="main">
-    <span class="layui-form-label" style="width: 200px;text-align: center;"><h3 style="font-weight: 700;">员工登录页面</h3></span>
+    <span class="layui-form-label" style="width: 200px;text-align: center;"><h3
+            style="font-weight: 700;">员工登录页面</h3></span>
     <div class="layui-form-item">
-        <label class="layui-form-label" >员工编号</label>
+        <label class="layui-form-label">员工编号</label>
         <div class="layui-input-block">
-            <input type="number" name="eid"  id="eid" maxlength="16" required  lay-verify="required" placeholder="请输入员工编号" autocomplete="off" class="layui-input" style="width:160px;" />
+            <input type="number" name="eid" id="eid" maxlength="16" required lay-verify="required" placeholder="请输入员工编号"
+                   autocomplete="off" class="layui-input" style="width:160px;"/>
         </div>
     </div>
 
-    <input type="submit" value="登录" id="submit" class="layui-btn" onclick="empLogin()" style="padding-left: 30px;padding-right: 30px;"/>
+    <button value="登录" id="submit" class="layui-btn layui-btn-normal" style="padding: 0 30px">登录
+    </button>
 </div>
 </body>
 <script>
+    layui.use(['layer'], function () {
+        var layer = layui.layer;
+        $("#submit").click(function () {
+            let eid = $("#eid").val().trim();
+            if (eid <= 0 || eid == null || eid == '') {
+                layer.msg("请输入员工编号");
+                $("#eid").focus().css({"border": "1px red solid"})
+                return false;
+            } else {
+                $.ajax({
+                    type: 'post',
+                    url: RequestURL + "/empLogin",
+                    data: {
+                        "eid": eid,
+                    },
+                    success: function (data) {
+                        if (data == 200) {
+                            window.location.href = "emp/home.html";
+                        } else if (data == 404) {
+                            layer.msg("员工不存在");
+                        }
+                    }
+                });
+            }
+        })
 
-    function empLogin(){
-        let eid = $("#eid").val().trim();
-        if(eid<=0||eid==null||eid==''){
-            alert("请输入员工编号");
-            return false;
-        }
-        else{
-            $.ajax({
-                type:'post',
-                url: RequestURL+"/empLogin",
-                data: {
-                    "eid": eid,
-                },
-                success: function(data) {
-                    if(data==200){
-                        window.location.href="emp/home.html";
-                    }
-                    else if(data==404){
-                        alert('员工不存在');
-                    }
-                }
-            });
-        }
-    }
+
+    })
+
 </script>
 </html>

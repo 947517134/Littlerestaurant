@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>我的订单</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../lib/constant.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <style>
+        *{
+            font-family: "微软雅黑 Light";
+        }
+        .dishes{
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 86%;
+            padding: 5px 4%;
+            border: 1px solid #DDDDDD;
+        }
+        .dishItem{
+            font-size: 10px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            margin-top: 2px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+<table id="demo" lay-filter="test"></table>
+
+</body>
+<div id="scanOrder" style="display: none;padding: 15px;width: 300px;">
+    <div style="padding-top: 5px;padding-bottom:5px;">菜品列表</div>
+    <div id="dishes" class="dishes">
+
+    </div>
+</div>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="scan">查看菜品</a>
+    {{#  if(d.state == 1){ }}
+    <a class="layui-btn layui-btn-xs" lay-event="end">完结订单</a>
+    {{#  } }}
+</script>
+<script>
+    var INDEX;
+    var table;
+    var tableIns;
+    $(function () {
+        $.ajax({
+            url:RequestURL+'/emp/howToRenderTableMy',
+            success:function (data) {
+                data[2]={field:"state",title:"订单状态",templet:function(d){return d.state==1?'进行中':'已完结';}};
+                let arr=[];
+                arr.unshift(data);
+                layui.use('table', function(){
+                    table = layui.table;
+                    //第一个实例
+                    tableIns=table.render({
+                        elem: '#demo'
+                        ,height: 700
+                        ,url: RequestURL+'/emp/scanMyOrders' //数据接口
+                        ,page: true //开启分页
+                        ,limit: 10
+                        ,cols: arr
+                    });
+
+                    //监听行工具事件
+                    table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+                        OBJ=obj;
+                        let data = obj.data //获得当前行数据
+                            ,layEvent = obj.event; //获得 lay-event 对应的值
+                        if(layEvent === 'scan'){
+                            obj.del(); //删除对应行（tr）的DOM结构
+                            tableIns.reload();
+                            //layer.close(index);
+                            //向服务端发送删除指令
+                            $.ajax({
+                                async:false,
+                                type:'get',
+                                url: RequestURL+"/emp/scanOrder",
+                                data: {
+                                    "oid": data.oid
+                                },
+                                success: function(data) {
+                                    let dishes="";
+                                    for(let i=0;i<data.length;i++){
+                                        dishes+="<div class=\"dishItem\">\n" +
+                                            "                <div style=\"width: 40%;text-align: left;\">"+data[i].dname+"</div>\n" +
+                                            "                <div style=\"width: 30%;text-align: center;\">￥"+data[i].dprice.toFixed(2)+"/份</div>\n" +
+                                            "                <div style=\"width: 20%;text-align: center;\">"+data[i].number+"份</div>\n" +
+                                            "            </div>";
+                                    }
+                                    $("#dishes").html(dishes);
+                                    INDEX=layer.open({
+                                        type: 1
+                                        ,content: $("#scanOrder")
+                                    });
+                                }
+                            });
+                        }
+                        else if(layEvent==='end'){
+                            if(confirm("确定完结订单?"))
+                                $.ajax({
+                                    type: 'post',
+                                    url: RequestURL + "/emp/endOrder",
+                                    data: {
+                                        oid: data.oid
+                                    },
+                                    success: function (data) {
+                                        alert(data.msg);
+                                    },
+                                    complete:function(){
+                                        tableIns.reload();
+                                    }
+                                });
+                        }
+                    });
+                });
+            }
+        });
+    });
+
+</script>
+</html>

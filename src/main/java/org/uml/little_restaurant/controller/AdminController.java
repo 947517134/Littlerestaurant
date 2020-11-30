@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.uml.little_restaurant.pojo.Admin;
+import org.uml.little_restaurant.pojo.Emp;
 import org.uml.little_restaurant.service.AdminService;
 import org.uml.little_restaurant.service.RestaurantService;
 
@@ -101,6 +102,47 @@ public class AdminController {
         return adminService.getOrdersInfo(page,limit);
     }
 
+    //(分页)获取员工列表
+    @GetMapping("/admin/getEmpByPage")
+    public Map<String,Object> getEmpByPage(@RequestParam("page")Integer page,
+                                           @RequestParam("limit")Integer limit){
+        return restaurantService.getEmpByPage(page,limit);
+    }
 
+    //删除员工
+    @PostMapping("/admin/deleteEmp")
+    public void deleteEmp(@RequestParam("eid")Integer eid){
+        restaurantService.deleteEmp(eid);
+    }
+
+    //编辑员工
+    @PostMapping("/admin/editEmp")
+    public void editEmp(@RequestParam("eid")Integer eid,
+                        @RequestParam("ename")String ename,
+                        @RequestParam("egender")String egender,
+                        @RequestParam("etype")Integer etype,
+                        @RequestParam("edate")String edate){
+        Emp emp = new Emp();
+        emp.setEid(eid);
+        emp.setEname(ename);
+        emp.setEgender(egender);
+        emp.setEtype(etype);
+        emp.setEdate(edate);
+        restaurantService.editEmp(emp);
+    }
+
+    //添加员工
+    @PostMapping("/admin/addEmp")
+    public void editEmp(@RequestParam("ename")String ename,
+                        @RequestParam("egender")String egender,
+                        @RequestParam("etype")Integer etype,
+                        @RequestParam("edate")String edate){
+        Emp emp = new Emp();
+        emp.setEname(ename);
+        emp.setEgender(egender);
+        emp.setEtype(etype);
+        emp.setEdate(edate);
+        restaurantService.addEmp(emp);
+    }
 
 }

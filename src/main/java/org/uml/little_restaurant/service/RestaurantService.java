@@ -3,6 +3,7 @@ package org.uml.little_restaurant.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.uml.little_restaurant.dao.MyDataBase;
+import org.uml.little_restaurant.pojo.Emp;
 
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,32 @@ public class RestaurantService {
     //添加菜品
     public void addDish(String dname, Double dprice) {
         myDataBase.addDish(dname,dprice);
+    }
+    //(分页)获取员工列表
+    public Map<String, Object> getEmpByPage(Integer page, Integer limit) {
+        Map<String,Object> map = new HashMap<>();
+        List<Map<String,Object>> emps = myDataBase.getEmpByPage(page,limit);
+        Long count = myDataBase.getEmpCount();
+        map.put("data",emps);
+        map.put("count",count);
+        map.put("code",0);
+        map.put("msg","获取数据成功");
+        return map;
+    }
+
+    //删除员工
+    public void deleteEmp(Integer eid) {
+        myDataBase.deleteEmp(eid);
+    }
+
+    //编辑员工
+    public void editEmp(Emp emp) {
+        myDataBase.editEmp(emp);
+    }
+
+    //添加员工
+    public void addEmp(Emp emp) {
+        myDataBase.addEmp(emp);
     }
 
 

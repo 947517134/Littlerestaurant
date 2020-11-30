@@ -8,10 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author zhiyu
- * @date 2020/11/11 12:46
- */
+
 @Service
 public class AdminService {
     @Autowired
@@ -49,4 +46,5 @@ public class AdminService {
         map.put("msg","获取数据成功");
         return map;
     }
+
 }

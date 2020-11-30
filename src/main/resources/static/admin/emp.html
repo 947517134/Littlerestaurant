@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>员工管理</title>
+    <script src="../lib/jquery-3.4.1.js"></script>
+    <script src="../lib/layui/layui.js"></script>
+    <script src="../lib/constant.js"></script>
+    <link rel="stylesheet" href="../lib/layui/css/layui.css">
+    <style>
+        .myHidden{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<button class="layui-btn layui-btn-normal" id="addBtn">添加</button>
+<table id="demo" lay-filter="test"></table>
+
+<div id="editEmp" style="display: none;padding: 15px;">
+    <div style="padding-top: 5px;padding-bottom:5px;" id="eidDiv">员工编号:<span id="eid"></span></div>
+    <form id="myForm">
+    <div style="padding-top: 5px;padding-bottom:5px;">员工姓名:<input type="text" id="ename" /></div>
+    <div style="padding-top: 5px;padding-bottom:5px;">员工性别:<input type="radio" name="egender" value="男" />男&nbsp;&nbsp;<input type="radio" name="egender" value="女" />女</div>
+    <div style="padding-top: 5px;padding-bottom:5px;">员工类型:<input type="radio" name="etype" value="0" />服务员&nbsp;&nbsp;<input type="radio" name="etype" value="1" />外卖员</div>
+    <div style="padding-top: 5px;padding-bottom:5px;">入职时间:<input type="date" id="edate" /></div>
+    </form>
+    <button id="submit" class="layui-btn-normal" style="padding: 8px;"></button>
+</div>
+
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    var OBJ;
+    var INDEX;
+    var table
+    var tableIns;
+
+    $(function(){
+        $("#addBtn").click(function () {
+            $("#eid").val("");
+            document.getElementById("myForm").reset();
+            $("input[name='egender'][value='男']").removeAttr("checked");
+            $("input[name='egender'][value='女']").removeAttr("checked");
+            $("input[name='etype'][value=0]").removeAttr("checked");
+            $("input[name='etype'][value=1]").removeAttr("checked");
+            $("#submit").text("确认添加");
+            $("#submit").attr("onclick","addEmp()");
+            $("#eidDiv").attr("class","myHidden");
+            INDEX=layer.open({
+                type: 1
+                ,content: $("#editEmp")
+            });
+        });
+    });
+    layui.use('table', function(){
+        table = layui.table;
+        //第一个实例
+        tableIns=table.render({
+            elem: '#demo'
+            ,width:685
+            ,height: 500
+            ,url: RequestURL+'/admin/getEmpByPage' //数据接口
+            ,page: true //开启分页
+            ,limit: 10
+            ,cols: [[ //表头
+                {field: 'eid', title: 'ID', width:80, fixed: 'left'}
+                ,{field: 'ename', title: '姓名', width:100}
+                ,{field: 'egender', title: '性别', width:80,sort:true}
+                ,{field: 'etype', title: '类型', width:80,sort:true}
+                ,{field: 'edate', title: '入职时间', width: 180, sort:true}
+                ,{fixed: 'right', width: 165, align:'center', toolbar: '#barDemo'}
+            ]]
+        });
+
+        //监听行工具事件
+        table.on('tool(test)', function(obj){ //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+            OBJ=obj;
+            let data = obj.data //获得当前行数据
+                ,layEvent = obj.event; //获得 lay-event 对应的值
+           if(layEvent === 'del'){
+                let r = confirm('真的删除\"'+data.eid+'.'+data.ename+'\"吗？');
+                if(r){
+                    obj.del(); //删除对应行（tr）的DOM结构
+                    tableIns.reload();
+                    //layer.close(index);
+                    //向服务端发送删除指令
+                    $.ajax({
+                        type:'post',
+                        url: RequestURL+"/admin/deleteEmp",
+                        data: {
+                            "eid": data.eid
+                        },
+                        success: function(data) {
+                            alert('删除成功');
+                        }
+                    });
+                };
+            } else if(layEvent === 'edit'){
+               $("#eidDiv").removeAttr("class");
+               $("#eid").text(data.eid);
+               $("#ename").val(data.ename);
+               if(data.egender=='男') $("input[name='egender'][value='男']").attr("checked",true);
+               else $("input[name='egender'][value='女']").attr("checked",true);
+               if(data.etype=='服务员') $("input[name='etype'][value=0]").attr("checked",true);
+               else $("input[name='etype'][value=1]").attr("checked",true);
+               $("#eid").val(data.eid);
+               $("#edate").val(data.edate);
+               $("#submit").text("保存修改");
+               $("#submit").attr("onclick","editEmp()");
+               INDEX=layer.open({
+                   type: 1
+                   ,content: $("#editEmp")
+               });
+
+           }
+        });
+    });
+
+    function addEmp() {
+        let sex=document.getElementsByName('egender');
+        let egender;
+        for(let i=0; i<sex.length;i++){
+            if(sex[i].checked){
+                egender=sex[i].value;
+            }
+        }
+        let types=document.getElementsByName('etype');
+        let etype;
+        for(let i=0; i<types.length;i++){
+            if(types[i].checked){
+                etype=types[i].value;
+            }
+        }
+        let ename = $("#ename").val().trim();
+        let edate = $("#edate").val().trim();
+        if(egender==null||etype==null||ename==''||ename==null||edate==''||edate==null){
+            alert("请填写完整信息!");
+            return false;
+        }
+        $.ajax({
+            type:'post',
+            url: RequestURL+"/admin/addEmp",
+            data: {
+                "ename":ename,
+                "egender":egender,
+                "etype":etype,
+                "edate":edate,
+            },
+            success: function(data) {
+                alert('添加成功');
+                layer.close(INDEX);
+                tableIns.reload();
+            }
+        });
+    }
+
+    function editEmp(){
+        let sex=document.getElementsByName('egender');
+        let egender;
+        for(let i=0; i<sex.length;i++){
+            if(sex[i].checked){
+                egender=sex[i].value;
+            }
+        }
+        let types=document.getElementsByName('etype');
+        let etype;
+        for(let i=0; i<types.length;i++){
+            if(types[i].checked){
+                etype=types[i].value;
+            }
+        }
+        let ename = $("#ename").val().trim();
+        let edate = $("#edate").val().trim();
+        if(egender==null||etype==null||ename==''||ename==null||edate==''||edate==null){
+            alert("请填写完整信息!");
+            return false;
+        }
+        $.ajax({
+            type:'post',
+            url: RequestURL+"/admin/editEmp",
+            data: {
+                "eid": $("#eid").val(),
+                "ename":ename,
+                "egender":egender,
+                "etype":etype,
+                "edate":edate,
+            },
+            success: function(data) {
+                alert('修改成功');
+                if(etype==0) etype='服务员';
+                else etype="外卖员";
+                OBJ.update({
+                    ename: ename
+                    ,egender: egender
+                    ,etype:etype
+                    ,edate:edate
+                });
+                layer.close(INDEX);
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

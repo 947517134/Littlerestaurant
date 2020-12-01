@@ -17,7 +17,7 @@
 
 #### 使用说明
 
-1.  共有三个主页面，分别为/login.html    /back.html   /emp.html
+1.  共有三个主页面，分别为/login.html    /back.html   /serve.html
 2.  经过实测，请尽量不要使用safari浏览器，因为会清除cookie
 3.  就这点水平，别喷
 
@@ -27,7 +27,7 @@
 2.  新建 Feat_xxx 分支
 3.  提交代码
     王君帅（用户和点餐）  石业鹏，张博轶（管理者功能）   徐江威（服务员功能）
-4.  新建 Pull Request
+
 
 
 #### 特技
